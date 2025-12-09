@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Registration Form</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+    <main class="container">
+        <h1>Online Course Registration</h1>
+        <p>Please fill out all mandatory fields (*).</p>
+
+        <form id="registrationForm" action="process_form.php" method="POST">
+            
+            <fieldset>
+                <legend>Personal Details</legend>
+
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                    <small class="error-message" id="nameError"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                    <small class="error-message" id="emailError"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
+                    <small class="error-message" id="phoneError">Must be 10 digits.</small>
+                </div>
+
+            </fieldset>
+
+            <fieldset>
+                <legend>Course Selection</legend>
+                
+                <div class="form-group">
+                    <label for="course">Select Course *</label>
+                    <select id="course" name="course" required>
+                        <option value="">-- Choose One --</option>
+                        <option value="cs">Computer Science Fundamentals</option>
+                        <option value="webdev">Web Development</option>
+                        <option value="datascience">Data Science</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Preferred Class Timing:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="morning" name="timing" value="Morning" required>
+                        <label for="morning">Morning (9 AM)</label>
+                        
+                        <input type="radio" id="evening" name="timing" value="Evening">
+                        <label for="evening">Evening (6 PM)</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comments">Additional Comments</label>
+                    <textarea id="comments" name="comments" rows="3"></textarea>
+                </div>
+
+            </fieldset>
+
+            <button type="submit" id="submitBtn">Register Now</button>
+            <p id="formStatus" style="display:none; margin-top: 15px; font-weight: bold;"></p>
+
+        </form>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            
+            $("#registrationForm").submit(function(e) {
+                
+                // Clear previous errors
+                $(".error-message").text('');
+                let isValid = true;
+
+                // 1. Name Validation (must not be empty)
+                if ($("#fullName").val().trim() === "") {
+                    $("#nameError").text("Full Name is required.");
+                    isValid = false;
+                }
+
+                // 2. Email Validation (basic format check)
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test($("#email").val())) {
+                    $("#emailError").text("Enter a valid email address.");
+                    isValid = false;
+                }
+
+                // 3. Phone Validation (must be 10 digits)
+                const phoneValue = $("#phone").val();
+                if (!/^\d{10}$/.test(phoneValue)) {
+                    $("#phoneError").text("Phone number must be exactly 10 digits.");
+                    isValid = false;
+                }
+                
+                // If client-side validation fails, prevent submission
+                if (!isValid) {
+                    e.preventDefault();
+                    $("#formStatus").text("Please correct the errors before submitting.").css('color', 'red').show();
+                    $('html, body').animate({
+                        scrollTop: $("#nameError").offset().top - 100
+                    }, 500);
+                }
+                // If validation passes, the form proceeds to process_form.php
+            });
+        });
+    </script>
+</body>
+</html>
